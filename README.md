@@ -1,2 +1,2 @@
-# VPN-Host-Core
+# VPN-Server-Core
 Hisham Alasadi
