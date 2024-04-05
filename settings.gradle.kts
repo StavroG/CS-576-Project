@@ -1,2 +1,2 @@
-rootProject.name = "VPN-Host-Core"
+rootProject.name = "VPN-Server-Core"
 
