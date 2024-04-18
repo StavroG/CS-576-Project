@@ -1,4 +1,4 @@
-package org.example.network;
+package socket.server;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -13,20 +13,15 @@ public class TcpServer
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
 
-    /**
-     * Initialize the server with a given port number to listen for clients
-     *
-     * @param portNumber the port for the server to listen to
-     */
-    public void startServer(int portNumber)
+    public TcpServer(int port)
     {
         try
         {
             System.out.println("Attempting to start server...");
 
-            serverSocket = new ServerSocket(portNumber);
+            serverSocket = new ServerSocket(port);
 
-            System.out.println("Server started on port: " + portNumber);
+            System.out.println("Server started on port: " + port);
         }
         catch(IOException e)
         {
@@ -41,11 +36,6 @@ public class TcpServer
      */
     public void waitForClient() throws IllegalStateException
     {
-        if(serverSocket == null)
-        {
-            throw new IllegalStateException("Need to open server port before client can join");
-        }
-
         try
         {
             System.out.println("Waiting for client...");
@@ -112,7 +102,7 @@ public class TcpServer
     /**
      * Disconnect the client from the server
      */
-    public void disconnectFromClient()
+    public void disconnectClient()
     {
         System.out.println("Closing connection with client...");
 
@@ -136,6 +126,11 @@ public class TcpServer
 
         try
         {
+            if(clientSocket.isConnected())
+            {
+                disconnectClient();
+            }
+
             serverSocket.close();
         }
         catch(IOException e)

@@ -1,6 +1,6 @@
-package org.example.app;
+package app;
 
-public class Server
+public class Client
 {
     public static void main(String[] args)
     {
