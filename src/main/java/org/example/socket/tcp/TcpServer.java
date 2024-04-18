@@ -1,14 +1,12 @@
-package org.example;
+package org.example.socket.tcp;
 
-import org.example.network.TcpServer;
-
-public class Main
+public class TcpServer
 {
     private static final int PORT_NUMBER = 5000;
 
     public static void main(String[] args)
     {
-        TcpServer tcpServer = new TcpServer();
+        org.example.network.TcpServer tcpServer = new org.example.network.TcpServer();
 
         try
         {
