@@ -46,14 +46,15 @@ public class CHACHA20 implements data.Cipher
     @Override
     public String decrypt(String encryptedMessage) throws Exception
     {
-        byte[] messageBytes = encryptedMessage.getBytes();
+        byte[] messageBytes = Base64.getDecoder().decode(encryptedMessage);
 
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         ChaCha20ParameterSpec param = new ChaCha20ParameterSpec(nonce, counter);
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey, param);
-        byte[] encryptedBytes = cipher.doFinal(messageBytes);
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, param);
 
-        return Base64.getEncoder().encodeToString(encryptedBytes);
+        byte[] decryptedBytes = cipher.doFinal(messageBytes);
+
+        return new String(decryptedBytes);
     }
 
     // generate 256-bit secret key (32-byte)
