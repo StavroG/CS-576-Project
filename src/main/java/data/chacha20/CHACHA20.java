@@ -58,20 +58,21 @@ public class CHACHA20 implements data.Cipher
     }
 
     // generate 256-bit secret key (32-byte)
-    private static SecretKey generateChaCha20Key() throws Exception {
+    private static SecretKey generateChaCha20Key() throws Exception
+    {
         // Use a secure random number generator
         SecureRandom secureRandom = new SecureRandom();
 
         byte[] key = new byte[32];
         secureRandom.nextBytes(key);
-        SecretKey secretKey = new SecretKeySpec(key, ALGORITHM);
 
         // Return the key
-        return secretKey;
+        return new SecretKeySpec(key, ALGORITHM);
     }
 
     // 96-bit nonce
-    private static byte[] getNonce() {
+    private static byte[] getNonce()
+    {
         byte[] newNonce = new byte[12];
         new SecureRandom().nextBytes(newNonce);
         return newNonce;
