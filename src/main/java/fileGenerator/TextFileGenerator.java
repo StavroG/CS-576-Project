@@ -19,13 +19,16 @@ public class TextFileGenerator {
         String hundredMB = "100MB.txt";
         String oneGB = "1GB.txt";
 
-        // select the .txt name for your needs
+        // choose one of them for the file size
         Path outputPath = Paths.get("src/main/resources", oneMB);
+        //Path outputPath = Paths.get("src/main/resources", hundredMB);
+        //Path outputPath = Paths.get("src/main/resources", oneGB);
 
         // Generate random text
-        // Change the iteration size (filesize_1mb, or 100mb or 1gb)
         StringBuilder randomText = new StringBuilder();
         Random random = new Random();
+
+        // Change the iteration size (filesize_1mb, or 100mb or 1gb)
         for (int i = 0; i < fileSize_1mb; i++) {
             char randomChar = (char) ('a' + random.nextInt(26));
             randomText.append(randomChar);
