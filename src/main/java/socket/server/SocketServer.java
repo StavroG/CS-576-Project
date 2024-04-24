@@ -2,7 +2,13 @@ package socket.server;
 
 public interface SocketServer
 {
+    /**
+     * Listen for messages from any clients
+     */
     String receiveMessage();
 
-    void sendMessage(String message);
+    /**
+     * Shutdown the server
+     */
+    void shutdownServer();
 }

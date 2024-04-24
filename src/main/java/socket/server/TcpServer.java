@@ -1,17 +1,15 @@
 package socket.server;
 
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class TcpServer
+public class TcpServer implements SocketServer
 {
-    private ServerSocket serverSocket;
-    private Socket clientSocket;
-    private DataInputStream dataInputStream;
-    private DataOutputStream dataOutputStream;
+    private final ServerSocket serverSocket;
+    private final Socket clientSocket;
+    private final DataInputStream dataInputStream;
 
     public TcpServer(int port)
     {
@@ -22,22 +20,7 @@ public class TcpServer
             serverSocket = new ServerSocket(port);
 
             System.out.println("Server started on port: " + port);
-        }
-        catch(IOException e)
-        {
-            throw new RuntimeException("Could not start server");
-        }
-    }
 
-    /**
-     * Wait for a client to connect to the server
-     *
-     * @throws IllegalStateException throw exception if waiting for client without server port open
-     */
-    public void waitForClient() throws IllegalStateException
-    {
-        try
-        {
             System.out.println("Waiting for client...");
 
             clientSocket = serverSocket.accept();
@@ -45,27 +28,16 @@ public class TcpServer
             System.out.println("Client connected");
 
             dataInputStream = new DataInputStream(clientSocket.getInputStream());
-            dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
         }
         catch(IOException e)
         {
-            throw new RuntimeException("Encountered an error while waiting for client to connect");
+            throw new RuntimeException("Could not start server");
         }
     }
 
-    /**
-     * Listen to the client and wait for a message
-     *
-     * @return the message from the client
-     * @throws IllegalStateException throw exception if trying to listen to client before a client connects
-     */
-    public String listenToClient() throws IllegalStateException
+    @Override
+    public String receiveMessage()
     {
-        if(clientSocket == null)
-        {
-            throw new IllegalStateException("Client is not connected yet");
-        }
-
         try
         {
             return dataInputStream.readUTF();
@@ -76,50 +48,7 @@ public class TcpServer
         }
     }
 
-    /**
-     * Send a message to the client
-     *
-     * @param input the message to send to the client
-     * @throws IllegalStateException throw exception if a client is not connected yet
-     */
-    public void sendMessage(String input) throws IllegalStateException
-    {
-        if(clientSocket == null)
-        {
-            throw new IllegalStateException("Not connected to client");
-        }
-
-        try
-        {
-            dataOutputStream.writeUTF(input);
-        }
-        catch(IOException e)
-        {
-            throw new RuntimeException("Could not write to client");
-        }
-    }
-
-    /**
-     * Disconnect the client from the server
-     */
-    public void disconnectClient()
-    {
-        System.out.println("Closing connection with client...");
-
-        try
-        {
-            clientSocket.close();
-            dataInputStream.close();
-        }
-        catch(IOException e)
-        {
-            throw new RuntimeException("Problem disconnecting from client");
-        }
-    }
-
-    /**
-     * Shutdown the server port
-     */
+    @Override
     public void shutdownServer()
     {
         System.out.println("Shutting down server...");
@@ -128,14 +57,15 @@ public class TcpServer
         {
             if(clientSocket.isConnected())
             {
-                disconnectClient();
+                clientSocket.close();
+                dataInputStream.close();
             }
 
             serverSocket.close();
         }
         catch(IOException e)
         {
-            throw new RuntimeException("Encountered an error while closing the server socket");
+            throw new RuntimeException("Encountered an error while shutting down the server");
         }
     }
 }
