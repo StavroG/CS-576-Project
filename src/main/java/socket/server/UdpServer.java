@@ -3,10 +3,9 @@ package socket.server;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.SocketException;
 
-public class UdpServer
+public class UdpServer implements SocketServer
 {
     private final DatagramSocket datagramSocket;
 
@@ -31,12 +30,8 @@ public class UdpServer
         }
     }
 
-    /**
-     * Listen to a UDP message from the client
-     *
-     * @return the data packet containing information such as: the message data, client address and client port number
-     */
-    public DatagramPacket listenForMessage()
+    @Override
+    public String receiveMessage()
     {
         try
         {
@@ -45,7 +40,7 @@ public class UdpServer
 
             datagramSocket.receive(datagramPacket);
 
-            return datagramPacket;
+            return new String(datagramPacket.getData(), 0, datagramPacket.getLength());
         }
         catch(IOException e)
         {
@@ -53,29 +48,8 @@ public class UdpServer
         }
     }
 
-    /**
-     * Send a response to the client after getting a message
-     *
-     * @param response   the message to send back to the client
-     * @param address    the address of the client
-     * @param portNumber the port number the client is listening on
-     */
-    public void sendResponse(String response, InetAddress address, int portNumber)
-    {
-        try
-        {
-            datagramSocket.send(new DatagramPacket(response.getBytes(), response.getBytes().length, address, portNumber));
-        }
-        catch(IOException e)
-        {
-            throw new RuntimeException("Could not send a response to the client");
-        }
-    }
-
-    /**
-     * Shutdown the server datagram socket when done
-     */
-    public void closeServer()
+    @Override
+    public void shutdownServer()
     {
         datagramSocket.close();
     }
