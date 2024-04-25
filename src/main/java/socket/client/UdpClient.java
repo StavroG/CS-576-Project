@@ -1,10 +1,7 @@
 package socket.client;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.*;
 
 public class UdpClient implements SocketClient
 {
@@ -15,10 +12,10 @@ public class UdpClient implements SocketClient
     /**
      * Initialize the client with a port number and an address
      *
-     * @param portNumber the port number the server is listening on
      * @param address    the address of the server
+     * @param portNumber the port number the server is listening on
      */
-    public UdpClient(int portNumber, InetAddress address)
+    public UdpClient(String address, int portNumber)
     {
         try
         {
@@ -29,9 +26,9 @@ public class UdpClient implements SocketClient
             System.out.println("Connected to server at address: " + address + ":" + portNumber);
 
             this.portNumber = portNumber;
-            this.address = address;
+            this.address = InetAddress.getByName(address);
         }
-        catch(SocketException e)
+        catch(SocketException | UnknownHostException e)
         {
             throw new RuntimeException("Could not connect to server");
         }

@@ -6,8 +6,8 @@ import java.net.Socket;
 
 public class TcpClient implements SocketClient
 {
-    private Socket serverSocket;
-    private DataOutputStream dataOutputStream;
+    private final Socket serverSocket;
+    private final DataOutputStream dataOutputStream;
 
     /**
      * Initialize the client with a given address of the network a server is on and
@@ -16,7 +16,7 @@ public class TcpClient implements SocketClient
      * @param address    the network address the server is on
      * @param portNumber the port that the server is listening to
      */
-    public void connectToServer(String address, int portNumber)
+    public TcpClient(String address, int portNumber)
     {
         try
         {
@@ -33,7 +33,6 @@ public class TcpClient implements SocketClient
             throw new RuntimeException("Could not connect to server");
         }
     }
-
 
     @Override
     public void sendMessage(String input) throws IllegalStateException

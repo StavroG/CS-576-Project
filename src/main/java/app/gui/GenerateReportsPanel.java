@@ -1,15 +1,34 @@
 package app.gui;
 
+import data.aes.AES;
+import data.camellia.Camellia;
+import data.chacha20.CHACHA20;
+import data.threedes.ThreeDES;
+import socket.client.TcpClient;
+import socket.client.UdpClient;
+import socket.server.TcpServer;
+
+import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 
 public class GenerateReportsPanel extends JFrame
 {
-    private final JTextField filePathField = new JTextField();
+    private final JTextField filePathField;
+    private final TcpClient tcpClient;
+    private final UdpClient udpClient;
+    private AES aes = new AES();
+    private Camellia camellia = new Camellia();
+    private ThreeDES threeDES = new ThreeDES();
+    private CHACHA20 chacha20 = new CHACHA20();
 
-    public GenerateReportsPanel()
+    public GenerateReportsPanel(TcpClient tcpClient, UdpClient udpClient) throws Exception
     {
+        this.tcpClient = tcpClient;
+        this.udpClient = udpClient;
         JPanel mainPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(0, 10, 10, 10);
@@ -27,6 +46,7 @@ public class GenerateReportsPanel extends JFrame
         gbc.gridwidth = 1;
         mainPanel.add(browseFilesButton, gbc);
 
+        filePathField = new JTextField();
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -85,7 +105,6 @@ public class GenerateReportsPanel extends JFrame
 
         try
         {
-            //TODO generate data
             JOptionPane.showMessageDialog(this, "Reports generated successfully.", "Report Generation", JOptionPane.INFORMATION_MESSAGE);
         }
         catch(Exception e)
@@ -94,4 +113,23 @@ public class GenerateReportsPanel extends JFrame
             e.printStackTrace();
         }
     }
+
+    private long generateAesTcpReport(String message)
+    {
+        long startTimeMs = System.currentTimeMillis();
+
+        try
+        {
+            String encryptedMessage = aes.encrypt(message);
+            tcpClient.sendMessage(encryptedMessage);
+        }
+        catch(Exception e)
+        {
+            return 0;
+        }
+        long endTimeMs = System.currentTimeMillis();
+
+        return endTimeMs - startTimeMs;
+    }
+
 }
