@@ -41,7 +41,6 @@ import java.security.SecureRandom;
 public class Camellia implements data.Cipher
 {
     //https://javadoc.iaik.tugraz.at/iaik_jce/current/iaik/security/cipher/Camellia.html
-    //TODO: Need to implement this cipher
 
     private static final String algorithm = "Camellia";
     private static final String transformation = "Camellia/CBC/PKCS5Padding";
