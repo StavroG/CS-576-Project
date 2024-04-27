@@ -3,11 +3,14 @@ package socket.server;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
 
 public class UdpServer implements SocketServer
 {
     private final DatagramSocket datagramSocket;
+    private InetAddress lastClientAddress;
+    private int lastClientPort;
 
     /**
      * Start a UDP server on a given port
@@ -40,11 +43,32 @@ public class UdpServer implements SocketServer
 
             datagramSocket.receive(datagramPacket);
 
+            lastClientAddress = datagramPacket.getAddress();
+            lastClientPort = datagramPacket.getPort();
+
             return new String(datagramPacket.getData(), 0, datagramPacket.getLength());
         }
         catch(IOException e)
         {
             throw new RuntimeException("Could not listen for a message from the client");
+        }
+    }
+
+    @Override
+    public void sendResponse(String response)
+    {
+        if(lastClientAddress == null)
+        {
+            throw new NullPointerException("Could not send response message");
+        }
+
+        try
+        {
+            datagramSocket.send(new DatagramPacket(response.getBytes(), response.getBytes().length, lastClientAddress, lastClientPort));
+        }
+        catch(IOException e)
+        {
+            throw new RuntimeException("Could not send response message");
         }
     }
 

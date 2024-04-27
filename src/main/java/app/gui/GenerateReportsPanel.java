@@ -1,34 +1,23 @@
 package app.gui;
 
-import data.aes.AES;
-import data.camellia.Camellia;
-import data.chacha20.CHACHA20;
-import data.threedes.ThreeDES;
+import data.reporting.Report;
 import socket.client.TcpClient;
 import socket.client.UdpClient;
-import socket.server.TcpServer;
 
-import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 
 public class GenerateReportsPanel extends JFrame
 {
     private final JTextField filePathField;
-    private final TcpClient tcpClient;
-    private final UdpClient udpClient;
-    private AES aes = new AES();
-    private Camellia camellia = new Camellia();
-    private ThreeDES threeDES = new ThreeDES();
-    private CHACHA20 chacha20 = new CHACHA20();
+    private final GenerateReportsPanelHandler generateReportsPanelHandler;
+
 
     public GenerateReportsPanel(TcpClient tcpClient, UdpClient udpClient) throws Exception
     {
-        this.tcpClient = tcpClient;
-        this.udpClient = udpClient;
+        generateReportsPanelHandler = new GenerateReportsPanelHandler(tcpClient, udpClient);
+
         JPanel mainPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(0, 10, 10, 10);
@@ -105,6 +94,15 @@ public class GenerateReportsPanel extends JFrame
 
         try
         {
+            generateReportsPanelHandler.generateReports(file);
+
+            Report aesReport = generateReportsPanelHandler.getAesReport();
+            Report camelliaReport = generateReportsPanelHandler.getCamelliaReport();
+            Report threeDesReport = generateReportsPanelHandler.getThreeDesReport();
+            Report chacha20Report = generateReportsPanelHandler.getChacha20Report();
+
+            System.out.println(aesReport.toString());
+
             JOptionPane.showMessageDialog(this, "Reports generated successfully.", "Report Generation", JOptionPane.INFORMATION_MESSAGE);
         }
         catch(Exception e)
@@ -114,22 +112,5 @@ public class GenerateReportsPanel extends JFrame
         }
     }
 
-    private long generateAesTcpReport(String message)
-    {
-        long startTimeMs = System.currentTimeMillis();
-
-        try
-        {
-            String encryptedMessage = aes.encrypt(message);
-            tcpClient.sendMessage(encryptedMessage);
-        }
-        catch(Exception e)
-        {
-            return 0;
-        }
-        long endTimeMs = System.currentTimeMillis();
-
-        return endTimeMs - startTimeMs;
-    }
 
 }

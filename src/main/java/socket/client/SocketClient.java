@@ -10,6 +10,13 @@ public interface SocketClient
     void sendMessage(String message);
 
     /**
+     * Listen to a response from the server
+     *
+     * @return a message from the server
+     */
+    String listenForResponse();
+
+    /**
      * Disconnect the client from the server
      */
     void disconnect();

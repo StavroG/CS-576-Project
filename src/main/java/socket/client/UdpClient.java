@@ -48,6 +48,24 @@ public class UdpClient implements SocketClient
     }
 
     @Override
+    public String listenForResponse()
+    {
+        try
+        {
+            byte[] buffer = new byte[256];
+            DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length);
+
+            datagramSocket.receive(datagramPacket);
+
+            return new String(datagramPacket.getData(), 0, datagramPacket.getLength());
+        }
+        catch(IOException e)
+        {
+            throw new RuntimeException("Could not get a response from the server");
+        }
+    }
+
+    @Override
     public void disconnect()
     {
         datagramSocket.close();
