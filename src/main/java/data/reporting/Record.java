@@ -2,7 +2,6 @@ package data.reporting;
 
 public class Record
 {
-
     private final long tripTimeMs;
     private final long encryptionTimeMs;
     private final long decryptionTimeMs;

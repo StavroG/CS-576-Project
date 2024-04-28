@@ -6,12 +6,12 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class TcpServer implements SocketServer
+public class TcpServer extends Thread implements SocketServer
 {
     private final ServerSocket serverSocket;
-    private final Socket clientSocket;
-    private final DataInputStream dataInputStream;
-    private final DataOutputStream dataOutputStream;
+    private Socket clientSocket;
+    private DataInputStream dataInputStream;
+    private DataOutputStream dataOutputStream;
 
     public TcpServer(int port)
     {
@@ -22,7 +22,17 @@ public class TcpServer implements SocketServer
             serverSocket = new ServerSocket(port);
 
             System.out.println("Server started on port: " + port);
+        }
+        catch(IOException e)
+        {
+            throw new RuntimeException("Could not start server");
+        }
+    }
 
+    public void run()
+    {
+        try
+        {
             System.out.println("Waiting for client...");
 
             clientSocket = serverSocket.accept();
@@ -31,6 +41,20 @@ public class TcpServer implements SocketServer
 
             dataInputStream = new DataInputStream(clientSocket.getInputStream());
             dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
+
+            while(true)
+            {
+                String message = receiveMessage();
+                if(message.equalsIgnoreCase("quit"))
+                {
+                    shutdownServer();
+                    break;
+                }
+                else
+                {
+                    sendResponse(message);
+                }
+            }
         }
         catch(IOException e)
         {
@@ -43,6 +67,7 @@ public class TcpServer implements SocketServer
     {
         try
         {
+            sendResponse(dataInputStream.readUTF());
             return dataInputStream.readUTF();
         }
         catch(IOException e)

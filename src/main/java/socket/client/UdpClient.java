@@ -3,7 +3,7 @@ package socket.client;
 import java.io.IOException;
 import java.net.*;
 
-public class UdpClient implements SocketClient
+public class UdpClient extends Thread implements SocketClient
 {
     private final DatagramSocket datagramSocket;
     private final int portNumber;

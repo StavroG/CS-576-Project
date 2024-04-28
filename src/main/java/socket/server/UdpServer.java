@@ -6,7 +6,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
-public class UdpServer implements SocketServer
+public class UdpServer extends Thread implements SocketServer
 {
     private final DatagramSocket datagramSocket;
     private InetAddress lastClientAddress;
@@ -30,6 +30,24 @@ public class UdpServer implements SocketServer
         catch(SocketException e)
         {
             throw new RuntimeException("Could not start server");
+        }
+    }
+
+    public void run()
+    {
+        while(true)
+        {
+            String message = receiveMessage();
+
+            if(message.equalsIgnoreCase("quit"))
+            {
+                shutdownServer();
+                break;
+            }
+            else
+            {
+                sendResponse(message);
+            }
         }
     }
 

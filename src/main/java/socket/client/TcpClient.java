@@ -5,7 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-public class TcpClient implements SocketClient
+public class TcpClient extends Thread implements SocketClient
 {
     private final Socket serverSocket;
     private final DataInputStream dataInputStream;

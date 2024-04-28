@@ -102,6 +102,9 @@ public class GenerateReportsPanel extends JFrame
             Report chacha20Report = generateReportsPanelHandler.getChacha20Report();
 
             System.out.println(aesReport.toString());
+            System.out.println(camelliaReport.toString());
+            System.out.println(threeDesReport.toString());
+            System.out.println(chacha20Report.toString());
 
             JOptionPane.showMessageDialog(this, "Reports generated successfully.", "Report Generation", JOptionPane.INFORMATION_MESSAGE);
         }

@@ -39,9 +39,9 @@ public class GenerateReportsPanelHandler
         this.udpClient = udpClient;
 
         aes = new AES();
-//        camellia = new Camellia();
-//        threeDES = new ThreeDES();
-//        chacha20 = new CHACHA20();
+        camellia = new Camellia();
+        threeDES = new ThreeDES();
+        chacha20 = new CHACHA20();
 
         aesRecords = new ArrayList<>();
         camelliaRecords = new ArrayList<>();
@@ -55,44 +55,44 @@ public class GenerateReportsPanelHandler
 
         for(String fileChunk : fileChunks)
         {
-//            aesRecords.add(generateRecords(fileChunk, tcpClient, aes));
+            aesRecords.add(generateRecords(fileChunk, tcpClient, aes));
             aesRecords.add(generateRecords(fileChunk, udpClient, aes));
 
-//            camelliaRecords.add(generateRecords(fileChunk, tcpClient, camellia));
-//            camelliaRecords.add(generateRecords(fileChunk, udpClient, camellia));
+            camelliaRecords.add(generateRecords(fileChunk, tcpClient, camellia));
+            camelliaRecords.add(generateRecords(fileChunk, udpClient, camellia));
 
-//            threeDesRecords.add(generateRecords(fileChunk, tcpClient, threeDES));
-//            threeDesRecords.add(generateRecords(fileChunk, udpClient, threeDES));
+            threeDesRecords.add(generateRecords(fileChunk, tcpClient, threeDES));
+            threeDesRecords.add(generateRecords(fileChunk, udpClient, threeDES));
 
-//            chacha20Records.add(generateRecords(fileChunk, tcpClient, chacha20));
-//            chacha20Records.add(generateRecords(fileChunk, udpClient, chacha20));
+            chacha20Records.add(generateRecords(fileChunk, tcpClient, chacha20));
+            chacha20Records.add(generateRecords(fileChunk, udpClient, chacha20));
         }
         System.out.println("Done generating report");
     }
 
     public Report getAesReport()
     {
-        return new Report(aesRecords);
+        return new Report("AES", aesRecords);
     }
 
     public Report getCamelliaReport()
     {
-        return new Report(camelliaRecords);
+        return new Report("Camellia", camelliaRecords);
     }
 
     public Report getThreeDesReport()
     {
-        return new Report(threeDesRecords);
+        return new Report("3DES", threeDesRecords);
     }
 
     public Report getChacha20Report()
     {
-        return new Report(chacha20Records);
+        return new Report("ChaCha20", chacha20Records);
     }
 
     private List<String> readFileAsStrings(File file)
     {
-        int chunkSize = 256;
+        int chunkSize = 128;
         List<String> fileChunks = new ArrayList<>();
         try(BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file)))
         {
@@ -121,13 +121,14 @@ public class GenerateReportsPanelHandler
         try
         {
             long encryptionTimeStartMs = System.currentTimeMillis();
-
-            socketClient.sendMessage(cipher.encrypt(message));
+            String encrypted = cipher.encrypt(message);
             long encryptionTimeStopMs = System.currentTimeMillis();
             encryptionTimeMs = encryptionTimeStopMs - encryptionTimeStartMs;
+            socketClient.sendMessage(encrypted);
 
+            String response = socketClient.listenForResponse();
             long decryptionTimeStartMs = System.currentTimeMillis();
-            String decryptedMessage = cipher.decrypt(socketClient.listenForResponse());
+            String decryptedMessage = cipher.decrypt(response);
             long decryptionTimeStopMs = System.currentTimeMillis();
             decryptionTimeMs = decryptionTimeStopMs - decryptionTimeStartMs;
 
